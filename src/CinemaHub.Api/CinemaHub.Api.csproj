@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+        <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
@@ -16,6 +20,11 @@
       <Folder Include="Health\" />
       <Folder Include="Mapping\" />
       <Folder Include="Swagger\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CinemaHub.Application\CinemaHub.Application.csproj" />
+      <ProjectReference Include="..\CinemaHub.Contracts\CinemaHub.Contracts.csproj" />
     </ItemGroup>
 
 </Project>
