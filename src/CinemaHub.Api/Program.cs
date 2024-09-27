@@ -1,11 +1,16 @@
-var builder = WebApplication.CreateBuilder(args);
+using CinemaHub.Application;
+using CinemaHub.Application.Database;
 
+var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddApplication();
+builder.Services.AddDatabase(config["Database:ConnectionString"]!);
 
 var app = builder.Build();
 
@@ -22,4 +27,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+var dbInitializer = app.Services.GetRequiredService<DbInitializer>();
+await dbInitializer.InitializeAsync();
 app.Run();
