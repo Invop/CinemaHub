@@ -25,7 +25,6 @@
       <ProjectReference Include="..\CinemaHub.ServiceDefaults\CinemaHub.ServiceDefaults.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Controllers\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
 
