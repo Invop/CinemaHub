@@ -1,5 +1,6 @@
 using CinemaHub.ServiceDefaults;
 using Duende.IdentityServer.Services;
+using eShop.Identity.API;
 using Identity.Api.Configuration;
 using Identity.Api.Data;
 using Identity.Api.Models;
@@ -13,7 +14,7 @@ builder.AddServiceDefaults();
 builder.Services.AddControllersWithViews();
 
 builder.AddNpgsqlDbContext<ApplicationDbContext>("identitydb");
-
+builder.Services.AddMigration<ApplicationDbContext, UsersSeed>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
