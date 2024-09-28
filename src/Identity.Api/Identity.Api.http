@@ -1,1 +1,60 @@
-@Identity.Api_HostAddress = http://localhost:5135
+@IdentityApiHost = http://localhost:5002
+
+### Create a new roles
+POST {{IdentityApiHost}}/api/Identity/role
+Content-Type: application/json
+
+{
+  "roleName": "User"
+}
+###
+POST {{IdentityApiHost}}/api/Identity/role
+Content-Type: application/json
+
+{
+  "roleName": "Admin"
+}
+###
+
+### Register a new user
+POST {{IdentityApiHost}}/api/Identity/register
+Content-Type: application/json
+
+{
+  "email": "testadmin@example.com",
+  "password": "P@ssw0rd!",
+  "confirmPassword": "P@ssw0rd!",
+  "name": "Test",
+  "lastName": "Admin",
+  "roles": ["Admin"]
+}
+
+###
+POST {{IdentityApiHost}}/api/Identity/register
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "P@ssw0rd!",
+  "confirmPassword": "P@ssw0rd!",
+  "name": "Test",
+  "lastName": "User",
+  "roles": ["User"]
+}
+
+### Generate token for the registered user
+POST {{IdentityApiHost}}/api/Identity/token
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "P@ssw0rd!"
+}
+###
+POST {{IdentityApiHost}}/api/Identity/token
+Content-Type: application/json
+
+{
+  "email": "testadmin@example.com",
+  "password": "P@ssw0rd!"
+}
