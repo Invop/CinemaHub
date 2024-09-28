@@ -1,9 +1,9 @@
 using CinemaHub.ServiceDefaults;
-using Duende.IdentityServer.AspNetIdentity;
-using Identity.Api;
+using Duende.IdentityServer.Services;
 using Identity.Api.Configuration;
 using Identity.Api.Data;
 using Identity.Api.Models;
+using Identity.Api.Services;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +38,10 @@ builder.Services.AddIdentityServer(options =>
     .AddAspNetIdentity<ApplicationUser>()
 // TODO: Not recommended for production - you need to store your key material somewhere secure
     .AddDeveloperSigningCredential();
+
+builder.Services.AddTransient<IProfileService, ProfileService>();
+builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
+builder.Services.AddTransient<IRedirectService, RedirectService>();
 
 var app = builder.Build();
 

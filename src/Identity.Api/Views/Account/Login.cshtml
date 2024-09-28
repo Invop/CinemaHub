@@ -1,11 +1,10 @@
-@using Identity.Api.Configuration.Accounts
 @model Identity.Api.Models.AccountViewModels.LoginViewModel
 
 <div class="login-page">
     <div class="container">
         <div class="row top-buffer">
 
-            @if (AccountOptions.AllowLocalLogin)
+            @if (Model.EnableLocalLogin)
             {
                 <div class="col"></div>
                 <div class="col-sm-6">
@@ -22,12 +21,12 @@
                                 <label asp-for="Password"></label>
                                 <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
                             </div>
-                            @if (AccountOptions.AllowRememberLogin)
+                            @if (Model.AllowRememberLogin)
                             {
                                 <div class="form-group">
                                     <div class="form-check">
-                                        <input class="form-check-input" asp-for="RememberLogin">
-                                        <label class="form-check-label" asp-for="RememberLogin">
+                                        <input class="form-check-input" asp-for="RememberMe">
+                                        <label class="form-check-label" asp-for="RememberMe">
                                             Remember me
                                         </label>
                                     </div>

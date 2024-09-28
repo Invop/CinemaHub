@@ -2,11 +2,10 @@
 
 namespace Identity.Api.Models.AccountViewModels
 {
-    public record LoginViewModel
+    public class LoginInputModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string Username { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -16,4 +15,11 @@ namespace Identity.Api.Models.AccountViewModels
         public bool RememberMe { get; set; }
         public string ReturnUrl { get; set; }
     }
+    public class LoginViewModel : LoginInputModel
+    {
+        public bool AllowRememberLogin { get; set; } = true;
+        public bool EnableLocalLogin { get; set; } = true;
+
+    }
+
 }
