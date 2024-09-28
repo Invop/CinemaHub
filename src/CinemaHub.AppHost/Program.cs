@@ -1,8 +1,5 @@
-using CinemaHub.AppHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
-builder.AddForwardedHeaders();
-
 var redis = builder.AddRedis("redis");
 var rabbitMq = builder.AddRabbitMQ("eventbus");
 var postgres = builder.AddPostgres("postgres").WithPgAdmin();

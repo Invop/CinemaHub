@@ -1,4 +1,7 @@
-﻿namespace Identity.Api.Configuration
+﻿using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
+
+namespace Identity.Api.Configuration
 {
     public class Config
     {
@@ -7,7 +10,7 @@
         {
             return new List<ApiResource>
             {
-                new ApiResource("movies", "Movies Service"),
+                // new ApiResource("movies", "Movies Service"),
             };
         }
 
@@ -17,7 +20,7 @@
         {
             return new List<ApiScope>
             {
-                new ApiScope("movies", "Movies Service"),
+                // new ApiScope("movies", "Movies Service"),
             };
         }
 
