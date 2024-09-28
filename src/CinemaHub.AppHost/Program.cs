@@ -1,11 +1,11 @@
+using CinemaHub.AppHost;
+
 var builder = DistributedApplication.CreateBuilder(args);
+builder.AddForwardedHeaders();
 
 var redis = builder.AddRedis("redis");
 var rabbitMq = builder.AddRabbitMQ("eventbus");
-var postgres = builder.AddPostgres("postgres")
-    .WithImage("ankane/pgvector")
-    .WithImageTag("latest");
-
+var postgres = builder.AddPostgres("postgres").WithPgAdmin();
 var identityDb = postgres.AddDatabase("identitydb");
 var moviesDb = postgres.AddDatabase("moviesdb");
 
@@ -17,15 +17,9 @@ var identityApi = builder.AddProject<Projects.Identity_Api>("identity-api", laun
 
 var identityEndpoint = identityApi.GetEndpoint(launchProfileName);
 
-var moviesApi = builder.AddProject<Projects.CinemaHub_Api>("movies-api")
-    .WithReference(redis)
-    .WithReference(rabbitMq)
-    .WithReference(moviesDb)
-    .WithEnvironment("Identity__Url", identityEndpoint);
 // Apps
 var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     .WithExternalHttpEndpoints()
-    .WithReference(moviesApi)
     .WithReference(rabbitMq)
     .WithEnvironment("IdentityUrl", identityEndpoint);
 
@@ -33,6 +27,11 @@ var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
 
 // Wire up the callback urls (self referencing)
 webApp.WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
+
+
+identityApi
+    .WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
+
 builder.Build().Run();
 
 // For test use only.
