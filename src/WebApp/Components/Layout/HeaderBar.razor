@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Components.Endpoints
+
+<div class="eshop-header @("")">
+    <div class="eshop-header-hero">
+    </div>
+    <div class="eshop-header-container">
+        <nav class="eshop-header-navbar">
+            <UserMenu />
+        </nav>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
+}

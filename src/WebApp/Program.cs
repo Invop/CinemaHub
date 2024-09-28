@@ -1,4 +1,5 @@
 using WebApp.Components;
+using WebApp.Extensions;
 
 namespace WebApp;
 
@@ -7,7 +8,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        builder.AddApplicationServices();
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
