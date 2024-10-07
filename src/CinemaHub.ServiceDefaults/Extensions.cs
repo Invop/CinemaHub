@@ -13,7 +13,7 @@ namespace CinemaHub.ServiceDefaults;
 // Adds common .NET Aspire services: service discovery, resilience, health checks, and OpenTelemetry.
 // This project should be referenced by each service project in your solution.
 // To learn more about using this project, see https://aka.ms/dotnet/aspire/service-defaults
-public static class Extensions
+public static partial class Extensions
 {
     public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder)
     {
@@ -37,6 +37,15 @@ public static class Extensions
         // {
         //     options.AllowedSchemes = ["https"];
         // });
+
+        return builder;
+    }
+    public static IHostApplicationBuilder AddBasicServiceDefaults(this IHostApplicationBuilder builder)
+    {
+        // Default health checks assume the event bus and self health checks
+        builder.AddDefaultHealthChecks();
+
+        builder.ConfigureOpenTelemetry();
 
         return builder;
     }
