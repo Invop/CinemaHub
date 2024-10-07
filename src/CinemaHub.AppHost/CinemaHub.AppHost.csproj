@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\CinemaHub.Api\CinemaHub.Api.csproj" />
       <ProjectReference Include="..\Identity.Api\Identity.Api.csproj" />
       <ProjectReference Include="..\WebApp\WebApp.csproj" />
     </ItemGroup>

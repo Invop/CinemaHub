@@ -4,8 +4,6 @@ using CinemaHub.AppHost;
 var builder = DistributedApplication.CreateBuilder(args);
 builder.AddForwardedHeaders();
 
-var redis = builder.AddRedis("redis");
-var rabbitMq = builder.AddRabbitMQ("eventbus");
 var postgres = builder.AddPostgres("postgres").WithPgAdmin();
 var identityDb = postgres.AddDatabase("identitydb");
 var moviesDb = postgres.AddDatabase("moviesdb");
@@ -18,11 +16,15 @@ var identityApi = builder.AddProject<Projects.Identity_Api>("identity-api", laun
 
 var identityEndpoint = identityApi.GetEndpoint(launchProfileName);
 
+var moviesApi = builder.AddProject<Projects.CinemaHub_Api>("movies-api")
+    .WithReference(moviesDb)
+    .WithEnvironment("Identity__Url", identityEndpoint);
+
+
 // Apps
 var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     .WithExternalHttpEndpoints()
-    .WithReference(rabbitMq)
-    .WithEnvironment("IdentityUrl", identityEndpoint);
+    .WithEnvironment("Identity__Url", identityEndpoint);
 
 
 
