@@ -8,7 +8,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace eShop.ServiceDefaults;
+namespace CinemaHub.ServiceDefaults;
 
 internal sealed class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {
