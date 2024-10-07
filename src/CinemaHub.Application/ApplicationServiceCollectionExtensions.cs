@@ -1,6 +1,4 @@
-﻿using CinemaHub.Application.Database;
-using CinemaHub.ServiceDefaults;
-using FluentValidation;
+﻿using CinemaHub.ServiceDefaults;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

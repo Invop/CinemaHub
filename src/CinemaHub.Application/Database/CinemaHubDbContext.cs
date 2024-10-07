@@ -1,39 +1,65 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using CinemaHub.Application.Models;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
-namespace CinemaHub.Application.Database
+namespace CinemaHub.Application.Database;
+
+public class MoviesDbContext : DbContext
 {
-    public class CinemaHubDbContext : DbContext
+    public MoviesDbContext(DbContextOptions<MoviesDbContext> options)
+        : base(options)
     {
-        public CinemaHubDbContext(DbContextOptions<CinemaHubDbContext> options)
-            : base(options) { }
+    }
 
-        public DbSet<Movie> Movies { get; set; }
-        public DbSet<MovieRating> Ratings { get; set; }
+    public DbSet<Movie> Movies { get; set; }
+    public DbSet<MovieRating> MovieRatings { get; set; }
+    public DbSet<Genre> Genres { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Movie>(entity =>
         {
-            modelBuilder.Entity<Movie>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Slug).ValueGeneratedOnAdd();
-                entity.HasIndex(e => e.Slug).IsUnique();
-                entity.Property(e => e.Genres).HasConversion(
-                        v => string.Join(',', v),
-                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
-                    .Metadata.SetValueComparer(new ValueComparer<List<string>>(
-                        (c1, c2) => c1.SequenceEqual(c2),
-                        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                        c => c.ToList()));
-            });
+            entity.ToTable("movies");
 
-            modelBuilder.Entity<MovieRating>(entity =>
-            {
-                entity.HasKey(e => new { e.UserId, e.MovieId }); // Composite key
-            });
-        }
+            entity.HasKey(e => e.Id);
+
+            entity.HasIndex(e => e.Slug).IsUnique();
+
+            entity.Property(e => e.Slug).IsRequired();
+
+            entity.Property(e => e.Title).IsRequired();
+
+            entity.Property(e => e.YearOfRelease).IsRequired();
+
+            entity.Ignore(e => e.Genres);  // Ignored because genres are mapped separately
+        });
+
+        modelBuilder.Entity<MovieRating>(entity =>
+        {
+            entity.ToTable("ratings");
+
+            entity.HasKey(e => new { e.UserId, e.MovieId });
+
+            entity.Property(e => e.Rating).IsRequired();
+
+            entity.HasOne<Movie>()
+                .WithMany()
+                .HasForeignKey(e => e.MovieId);
+        });
+
+        modelBuilder.Entity<Genre>(entity =>
+        {
+            entity.ToTable("genres");
+
+            entity.HasKey(e => new { e.MovieId, e.Name });
+
+            entity.Property(e => e.Name).IsRequired();
+
+            entity.HasOne(e => e.Movie)
+                .WithMany(m => m.Genres)
+                .HasForeignKey(e => e.MovieId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        base.OnModelCreating(modelBuilder);
     }
 }

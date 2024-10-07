@@ -16,8 +16,8 @@ builder.AddDefaultOpenApi(withApiVersioning);
 builder.Services.AddControllers();
 builder.Services.AddApplication();
 
-builder.AddNpgsqlDbContext<CinemaHubDbContext>("moviesdb");
-builder.Services.AddMigration<CinemaHubDbContext>();
+builder.AddNpgsqlDbContext<MoviesDbContext>("moviesdb");
+builder.Services.AddMigration<MoviesDbContext>();
 var app = builder.Build();
 
 app.UseDefaultOpenApi();
