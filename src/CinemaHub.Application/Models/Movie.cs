@@ -1,33 +1,41 @@
-﻿using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace CinemaHub.Application.Models;
 
 public partial class Movie
 {
-    private string _slug = string.Empty;
-
-    [Key]
-    public required Guid Id { get; init; }
-        
-    [Required]
-    public required string Title { get; set; }
-
-    public float? Rating { get; set; }
-
-    public int? UserRating { get; set; }
-
-    [Required]
-    public required int YearOfRelease { get; set; }
-
-    [Required]
-    public string Slug
-    {
-        get => GenerateSlug();
+    private string? _slug;
+    
+    public Guid Id { get; set; }
+    public string Slug 
+    { 
+        get => _slug ??= GenerateSlug();
         private set => _slug = value;
     }
+    private string _title = default!;
+    public string Title 
+    { 
+        get => _title;
+        set
+        {
+            _title = value;
+            _slug = null; // Reset slug when title changes
+        }
+    }
+    private int _yearOfRelease;
+    public int YearOfRelease 
+    { 
+        get => _yearOfRelease;
+        set
+        {
+            _yearOfRelease = value;
+            _slug = null; // Reset slug when year changes
+        }
+    }
+
+    // Navigation properties
+    public ICollection<Genre> Genres { get; set; } = new List<Genre>();
+    public ICollection<MovieRating> Ratings { get; set; } = new List<MovieRating>();
 
     private string GenerateSlug()
     {
@@ -38,6 +46,4 @@ public partial class Movie
 
     [GeneratedRegex("[^0-9A-Za-z _-]", RegexOptions.NonBacktracking, 5)]
     private static partial Regex SlugRegex();
-
-    public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 }
