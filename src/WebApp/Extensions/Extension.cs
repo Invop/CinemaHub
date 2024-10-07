@@ -49,6 +49,7 @@ public static class Extensions
                 options.RequireHttpsMetadata = false;
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
+                options.Scope.Add("movies");
             });
 
         // Blazor auth services
