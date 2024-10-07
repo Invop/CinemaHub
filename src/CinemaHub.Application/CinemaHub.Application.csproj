@@ -26,9 +26,4 @@
       <ProjectReference Include="..\CinemaHub.ServiceDefaults\CinemaHub.ServiceDefaults.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Repositories\" />
-      <Folder Include="Services\" />
-    </ItemGroup>
-
 </Project>
