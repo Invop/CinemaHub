@@ -1,6 +1,6 @@
-﻿/*
+﻿
+using CinemaHub.Application.Infrastructure.Repositories;
 using CinemaHub.Application.Models;
-using CinemaHub.Application.Repositories;
 using FluentValidation;
 
 namespace CinemaHub.Application.Validators;
@@ -41,4 +41,3 @@ public class MovieValidator : AbstractValidator<Movie>
         return existingMovie is null;
     }
 }
-*/

@@ -16,10 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\CinemaHub.Application\CinemaHub.Application.csproj" />
       <ProjectReference Include="..\CinemaHub.Contracts\CinemaHub.Contracts.csproj" />
     </ItemGroup>

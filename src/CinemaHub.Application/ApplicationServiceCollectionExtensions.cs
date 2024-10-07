@@ -1,7 +1,9 @@
-﻿using CinemaHub.Application.Infrastructure.Repositories;
+﻿using CinemaHub.Application.Data;
+using CinemaHub.Application.Infrastructure.Repositories;
 using CinemaHub.Application.Infrastructure.Services;
 using CinemaHub.ServiceDefaults;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -16,12 +18,13 @@ public static class ApplicationServiceCollectionExtensions
     }
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddSingleton<IRatingRepository, RatingRepository>();
-        services.AddSingleton<IRatingService, RatingService>();
-        services.AddSingleton<IMovieRepository, MovieRepository>();
-        services.AddSingleton<IMovieService, MovieService>();
-        services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Singleton);
+        services.AddHttpContextAccessor();
+        services.AddTransient<IIdentityService, IdentityService>();
+        services.AddScoped<IRatingRepository, RatingRepository>();
+        services.AddScoped<IRatingService, RatingService>();
+        services.AddScoped<IMovieRepository, MovieRepository>();
+        services.AddScoped<IMovieService, MovieService>();
+        services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Scoped); // Adjusted to Scoped
         return services;
     }
-
 }
