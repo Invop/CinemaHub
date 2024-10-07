@@ -3,6 +3,7 @@ using CinemaHub.Application.Infrastructure.Repositories;
 using CinemaHub.Application.Infrastructure.Services;
 using CinemaHub.ServiceDefaults;
 using FluentValidation;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +16,12 @@ public static class ApplicationServiceCollectionExtensions
     {
         builder.AddDefaultAuthentication();
 
+    }
+
+    public static IServiceCollection AddDatabase(this IServiceCollection services)
+    {
+        services.AddMigration<MovieDbContext,MoviesSeeder>();
+        return services;
     }
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {

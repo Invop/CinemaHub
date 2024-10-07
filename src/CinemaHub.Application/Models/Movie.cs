@@ -12,8 +12,8 @@ public partial class Movie
     public Guid Id { get; set; }
     public string Slug 
     { 
-        get => _slug ??= GenerateSlug();
-        private set => _slug = value;
+        get => _slug ??= GenerateSlug(); 
+        set => _slug = value;
     }
     private string _title = default!;
     public string Title 

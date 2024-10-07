@@ -19,8 +19,11 @@
       <ProjectReference Include="..\CinemaHub.Application\CinemaHub.Application.csproj" />
       <ProjectReference Include="..\CinemaHub.Contracts\CinemaHub.Contracts.csproj" />
     </ItemGroup>
+
     <ItemGroup>
-        <Compile Include="..\Shared\MigrateDbContextExtensions.cs" Link="Extensions\MigrateDbContextExtensions.cs" />
-        <Compile Include="..\Shared\ActivityExtensions.cs" Link="Extensions\ActivityExtensions.cs" />
+      <None Include="movies.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
+
 </Project>

@@ -13,10 +13,9 @@ var withApiVersioning = builder.Services.AddApiVersioning();
 
 builder.AddDefaultOpenApi(withApiVersioning);
 builder.AddNpgsqlDbContext<MovieDbContext>("moviesdb");
-builder.Services.AddMigration<MovieDbContext>();
+builder.Services.AddDatabase();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
-
 
 var app = builder.Build();
 app.MapDefaultEndpoints();

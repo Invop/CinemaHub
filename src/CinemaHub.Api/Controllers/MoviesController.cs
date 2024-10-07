@@ -37,23 +37,6 @@ public class MoviesController : ControllerBase
         return CreatedAtAction(nameof(Get), new { idOrSlug = movie.Id }, movieResponse);
     }
     
-    [HttpPost(ApiEndpoints.Movies.CreateMany)]
-    [ProducesResponseType(typeof(IEnumerable<MovieResponse>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] CreateMovieRequest[] requests, CancellationToken token)
-    {
-        var responses = new List<MovieResponse>();
-
-        foreach (var request in requests)
-        {
-            var movie = request.MapToMovie();
-            await _movieService.CreateAsync(movie, token);
-            var movieResponse = movie.MapToResponse();
-            responses.Add(movieResponse);
-        }
-
-        return StatusCode(StatusCodes.Status201Created, responses);
-    }
 
     [HttpGet(ApiEndpoints.Movies.Get)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
@@ -87,7 +70,7 @@ public class MoviesController : ControllerBase
         var response = movie.MapToResponse();
         return Ok(response);
     }
-
+    [AllowAnonymous]
     [HttpGet(ApiEndpoints.Movies.GetAll)]
     [ProducesResponseType(typeof(MoviesResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] GetAllMoviesRequest request, CancellationToken token)
