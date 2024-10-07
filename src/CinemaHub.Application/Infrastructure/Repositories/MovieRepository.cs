@@ -24,6 +24,7 @@ public class MovieRepository : IMovieRepository
     {
         var movie = await _context.Movies.Include(m => m.Genres)
             .Include(m => m.Ratings)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(m => m.Id == id, token);
 
         if (movie == null) return null;
@@ -37,6 +38,7 @@ public class MovieRepository : IMovieRepository
     {
         var movie = await _context.Movies.Include(m => m.Genres)
             .Include(m => m.Ratings)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(m => m.Slug == slug, token);
 
         if (movie == null) return null;
@@ -50,7 +52,8 @@ public class MovieRepository : IMovieRepository
     {
         var query = _context.Movies.Include(m => m.Genres)
             .Include(m => m.Ratings)
-            .AsQueryable();
+            .AsQueryable()
+            .AsSplitQuery();
         
         if (!string.IsNullOrEmpty(options.Title))
         {
@@ -93,7 +96,8 @@ public class MovieRepository : IMovieRepository
 
     public async Task<bool> UpdateAsync(Movie movie, CancellationToken token = default)
     {
-        var existingMovie = await _context.Movies.Include(m => m.Genres).FirstOrDefaultAsync(m => m.Id == movie.Id, token);
+        var existingMovie = await _context.Movies.Include(m => m.Genres)
+            .FirstOrDefaultAsync(m => m.Id == movie.Id, token);
         if (existingMovie == null) return false;
 
         _context.Entry(existingMovie).CurrentValues.SetValues(movie);

@@ -3,12 +3,14 @@ using CinemaHub.Api.Mapping;
 using CinemaHub.Application.Infrastructure.Services;
 using CinemaHub.Contracts.Requests;
 using CinemaHub.Contracts.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Logging;
 
 namespace CinemaHub.Api.Controllers;
 [ApiVersion(1.0)]
+[Authorize]
 [ApiController]
 public class MoviesController : ControllerBase
 {
@@ -33,6 +35,24 @@ public class MoviesController : ControllerBase
         // await _outputCacheStore.EvictByTagAsync("movies", token);
         var movieResponse = movie.MapToResponse();
         return CreatedAtAction(nameof(Get), new { idOrSlug = movie.Id }, movieResponse);
+    }
+    
+    [HttpPost(ApiEndpoints.Movies.CreateMany)]
+    [ProducesResponseType(typeof(IEnumerable<MovieResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Create([FromBody] CreateMovieRequest[] requests, CancellationToken token)
+    {
+        var responses = new List<MovieResponse>();
+
+        foreach (var request in requests)
+        {
+            var movie = request.MapToMovie();
+            await _movieService.CreateAsync(movie, token);
+            var movieResponse = movie.MapToResponse();
+            responses.Add(movieResponse);
+        }
+
+        return StatusCode(StatusCodes.Status201Created, responses);
     }
 
     [HttpGet(ApiEndpoints.Movies.Get)]
@@ -88,6 +108,7 @@ public class MoviesController : ControllerBase
             }
             userId = parsedUserId;
         }
+        _logger.LogInformation(userId.ToString());
         var options = request.MapToOptions().WithUser(userId);
         var movies = await _movieService.GetAllAsync(options, token);
         var movieCount = await _movieService.GetCountAsync(options.Title, options.YearOfRelease, token);

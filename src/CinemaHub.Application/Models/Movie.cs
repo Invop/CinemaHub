@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace CinemaHub.Application.Models;
 
 public partial class Movie
 {
+    [JsonIgnore]
     private string? _slug;
     
     public Guid Id { get; set; }

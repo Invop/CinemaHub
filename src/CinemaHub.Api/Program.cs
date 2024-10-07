@@ -1,3 +1,4 @@
+using CinemaHub.Api;
 using CinemaHub.Api.Mapping;
 using CinemaHub.Application;
 using CinemaHub.Application.Data;
