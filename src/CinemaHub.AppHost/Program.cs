@@ -24,7 +24,7 @@ var moviesApi = builder.AddProject<Projects.CinemaHub_Api>("movies-api")
 // Apps
 var webApp = builder.AddProject<Projects.WebApp>("webapp", launchProfileName)
     .WithExternalHttpEndpoints()
-    .WithEnvironment("Identity__Url", identityEndpoint);
+    .WithEnvironment("IdentityUrl", identityEndpoint);
 
 
 
@@ -33,6 +33,7 @@ webApp.WithEnvironment("CallBackUrl", webApp.GetEndpoint(launchProfileName));
 
 
 identityApi
+    .WithEnvironment("MoviesApiClient",moviesApi.GetEndpoint(launchProfileName))
     .WithEnvironment("WebAppClient", webApp.GetEndpoint(launchProfileName));
 
 builder.Build().Run();

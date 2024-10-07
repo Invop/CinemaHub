@@ -10,7 +10,7 @@ namespace Identity.Api.Configuration
         {
             return new List<ApiResource>
             {
-                // new ApiResource("movies", "Movies Service"),
+                 new ApiResource("movies", "Movies Service"),
             };
         }
 
@@ -20,7 +20,7 @@ namespace Identity.Api.Configuration
         {
             return new List<ApiScope>
             {
-                // new ApiScope("movies", "Movies Service"),
+                 new ApiScope("movies", "Movies Service"),
             };
         }
 
