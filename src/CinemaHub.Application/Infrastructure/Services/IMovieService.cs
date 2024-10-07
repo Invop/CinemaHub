@@ -1,6 +1,6 @@
 ﻿using CinemaHub.Application.Models;
 
-namespace CinemaHub.Application.Services;
+namespace CinemaHub.Application.Infrastructure.Services;
 
 public interface IMovieService
 {

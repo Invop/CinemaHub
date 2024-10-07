@@ -28,7 +28,8 @@ public class MovieRepository : IMovieRepository
 
         if (movie == null) return null;
 
-        movie.Rating = movie.Ratings.Any() ? movie.Ratings.Average(r => r.Rating) : null;        movie.UserRating = userId.HasValue ? movie.Ratings.FirstOrDefault(r => r.UserId == userId.Value)?.Rating : null;
+        movie.Rating = movie.Ratings.Any() ? MathF.Round(movie.Ratings.Average(r => (float)r.Rating), 1) : null;
+        movie.UserRating = userId.HasValue ? movie.Ratings.FirstOrDefault(r => r.UserId == userId.Value)?.Rating : null;
         return movie;
     }
 
@@ -40,7 +41,7 @@ public class MovieRepository : IMovieRepository
 
         if (movie == null) return null;
 
-        movie.Rating = movie.Ratings.Any() ? movie.Ratings.Average(r => r.Rating) : null;
+        movie.Rating = movie.Ratings.Any() ? MathF.Round(movie.Ratings.Average(r => (float)r.Rating), 1) : null;
         movie.UserRating = userId.HasValue ? movie.Ratings.FirstOrDefault(r => r.UserId == userId.Value)?.Rating : null;
         return movie;
     }
@@ -84,7 +85,7 @@ public class MovieRepository : IMovieRepository
 
         return movieList.Select(m => 
         {
-            m.Rating = m.Ratings.Any() ? m.Ratings.Average(r => r.Rating) : null;
+            m.Rating = m.Ratings.Any() ? MathF.Round(m.Ratings.Average(r => (float)r.Rating), 1) : null;
             m.UserRating = options.UserId.HasValue ? m.Ratings.FirstOrDefault(r => r.UserId == options.UserId.Value)?.Rating : null;
             return m;
         });

@@ -35,7 +35,7 @@ public partial class Movie
     }
 
     [NotMapped]
-    public double? Rating { get; set; }
+    public float? Rating { get; set; }
     [NotMapped]
     public int? UserRating { get; set; }
 
