@@ -1,6 +1,6 @@
 ﻿using CinemaHub.Application.Models;
 
-namespace CinemaHub.Application.Repositories;
+namespace CinemaHub.Application.Infrastructure.Repositories;
 
 public interface IMovieRepository
 {

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
 
 namespace CinemaHub.Application.Models;
@@ -32,6 +33,11 @@ public partial class Movie
             _slug = null; // Reset slug when year changes
         }
     }
+
+    [NotMapped]
+    public double? Rating { get; set; }
+    [NotMapped]
+    public int? UserRating { get; set; }
 
     // Navigation properties
     public ICollection<Genre> Genres { get; set; } = new List<Genre>();
