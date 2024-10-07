@@ -1,22 +1,29 @@
 ﻿using System.Text.RegularExpressions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CinemaHub.Application.Models;
 
 public partial class Movie
 {
-    public required Guid Id { get; init; }
-    
-    public required string Title { get; set; }
+    private string _slug = string.Empty;
 
-    public string Slug => GenerateSlug();
-    
+    public required Guid Id { get; init; }
+        
+    public required string Title { get; set; }
+        
     public float? Rating { get; set; }
-    
+        
     public int? UserRating { get; set; }
 
     public required int YearOfRelease { get; set; }
-    
+        
     public required List<string> Genres { get; init; } = new();
+
+    public string Slug
+    {
+        get => GenerateSlug();
+        private set => _slug = value;
+    }
 
     private string GenerateSlug()
     {

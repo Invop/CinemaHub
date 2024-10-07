@@ -7,4 +7,5 @@ public class MovieRating
     public required string Slug { get; init; }
     
     public required int Rating { get; init; }
+    public required Guid UserId { get; init; }
 }
