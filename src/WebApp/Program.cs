@@ -1,3 +1,4 @@
+using MovieHub.ServiceDefaults;
 using Radzen;
 using WebApp.Components;
 using WebApp.Extensions;
@@ -9,6 +10,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.AddServiceDefaults();
         builder.AddApplicationServices();
         // Add services to the container.
         builder.Services.AddRazorComponents()
