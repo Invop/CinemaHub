@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @inject NavigationManager Nav
 @attribute [Authorize]
+<h1>AUTH</h1>
 @code {
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }

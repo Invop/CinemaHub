@@ -36,9 +36,9 @@ namespace WebApp.Services
             _httpClient = httpClient;
         }
 
-        public Task<MoviesResponse> GetMovies()
+        public Task<MoviesResponse> GetMovies(int page)
         {
-            return _httpClient.GetFromJsonAsync<MoviesResponse>(_remoteServiceBaseUrl)!;
+            return _httpClient.GetFromJsonAsync<MoviesResponse>(_remoteServiceBaseUrl+$"?page={page}")!;
         }
     }
 }

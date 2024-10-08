@@ -7,11 +7,12 @@
     <base href="/"/>
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="WebApp.styles.css"/>
+    <RadzenTheme Theme="material" @rendermode="InteractiveServer" />
     <HeadOutlet/>
 </head>
 
 <body>
-<Routes/>
+<Routes />
 <script src="_framework/blazor.web.js"></script>
 <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 </body>
