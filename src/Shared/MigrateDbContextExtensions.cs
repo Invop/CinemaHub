@@ -1,7 +1,11 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
-namespace Identity.Api.Services;
+
+namespace Microsoft.AspNetCore.Hosting;
 
 internal static class MigrateDbContextExtensions
 {

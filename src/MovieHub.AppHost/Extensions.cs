@@ -1,6 +1,6 @@
 ﻿using Aspire.Hosting.Lifecycle;
 
-namespace CinemaHub.AppHost;
+namespace MovieHub.AppHost;
 
 internal static class Extensions
 {

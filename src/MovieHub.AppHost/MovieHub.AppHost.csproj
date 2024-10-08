@@ -18,7 +18,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Identity.Api\Identity.Api.csproj" />
+      <ProjectReference Include="..\MovieHub.Api\MovieHub.Api.csproj" />
       <ProjectReference Include="..\WebApp\WebApp.csproj" />
     </ItemGroup>
+
+
+    
 
 </Project>

@@ -20,12 +20,15 @@
         <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.2.1" />
         <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\CinemaHub.ServiceDefaults\CinemaHub.ServiceDefaults.csproj" />
-    </ItemGroup>
+    
     <ItemGroup>
       <Folder Include="wwwroot\" />
     </ItemGroup>
-
+    <ItemGroup>
+        <Compile Include="..\Shared\MigrateDbContextExtensions.cs" Link="Extensions\MigrateDbContextExtensions.cs" />
+        <Compile Include="..\Shared\ActivityExtensions.cs" Link="Extensions\ActivityExtensions.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\MovieHub.ServiceDefaults\MovieHub.ServiceDefaults.csproj" />
+    </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
-using CinemaHub.ServiceDefaults;
+using MovieHub.ServiceDefaults;
 using Duende.IdentityServer.Services;
-using eShop.Identity.API;
+using Identity.Api;
 using Identity.Api.Configuration;
 using Identity.Api.Data;
 using Identity.Api.Models;

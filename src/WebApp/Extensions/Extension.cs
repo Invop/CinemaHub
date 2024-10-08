@@ -1,3 +1,4 @@
+using MovieHub.ServiceDefaults;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -49,6 +50,7 @@ public static class Extensions
                 options.RequireHttpsMetadata = false;
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
+                options.Scope.Add("movies");
             });
 
         // Blazor auth services

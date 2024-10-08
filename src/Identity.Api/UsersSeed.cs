@@ -3,7 +3,7 @@ using Identity.Api.Models;
 using Identity.Api.Services;
 using Microsoft.AspNetCore.Identity;
 
-namespace eShop.Identity.API;
+namespace Identity.Api;
 
 public class UsersSeed(ILogger<UsersSeed> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager) : IDbSeeder<ApplicationDbContext>
 {
@@ -122,6 +122,19 @@ public class UsersSeed(ILogger<UsersSeed> logger, UserManager<ApplicationUser> u
             if (logger.IsEnabled(LogLevel.Debug))
             {
                 logger.LogDebug("user role created");
+            }
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(result.Errors.First().Description);
+            }
+        }
+        if (!await roleManager.RoleExistsAsync("trusted member"))
+        {
+            var result = await roleManager.CreateAsync(new IdentityRole("trusted member"));
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug("trusted member role created");
             }
 
             if (!result.Succeeded)
