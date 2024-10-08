@@ -20,7 +20,7 @@ public static class Extensions
             .AddAuthToken();
     }
 
-    public static void AddAuthenticationServices(this IHostApplicationBuilder builder)
+    private static void AddAuthenticationServices(this IHostApplicationBuilder builder)
     {
         var configuration = builder.Configuration;
         var services = builder.Services;

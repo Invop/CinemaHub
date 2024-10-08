@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MovieHub.Contracts\MovieHub.Contracts.csproj" />
       <ProjectReference Include="..\MovieHub.ServiceDefaults\MovieHub.ServiceDefaults.csproj" />
     </ItemGroup>
 
