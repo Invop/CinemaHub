@@ -17,12 +17,14 @@ public class MoviesController : ControllerBase
     private readonly IMovieService _movieService;
     private readonly IIdentityService _identityService;
     private readonly ILogger<MoviesController> _logger;
-
-    public MoviesController(IMovieService movieService, IIdentityService identityService, ILogger<MoviesController> logger)
+    private readonly IOutputCacheStore _outputCacheStore;
+    public MoviesController(IMovieService movieService, IIdentityService identityService, 
+        ILogger<MoviesController> logger, IOutputCacheStore outputCacheStore)
     {
         _movieService = movieService;
         _identityService = identityService;
         _logger = logger;
+        _outputCacheStore = outputCacheStore;
     }
 
     [HttpPost(ApiEndpoints.Movies.Create)]
@@ -32,33 +34,19 @@ public class MoviesController : ControllerBase
     {
         var movie = request.MapToMovie();
         await _movieService.CreateAsync(movie, token);
-        // await _outputCacheStore.EvictByTagAsync("movies", token);
+        await _outputCacheStore.EvictByTagAsync("movies", token);
         var movieResponse = movie.MapToResponse();
         return CreatedAtAction(nameof(Get), new { idOrSlug = movie.Id }, movieResponse);
     }
     
 
     [HttpGet(ApiEndpoints.Movies.Get)]
+    [OutputCache(PolicyName = "MovieCache")]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromRoute] string idOrSlug, CancellationToken token)
     {
-        var userIdStr = _identityService.GetUserIdentity();
-        Guid? userId = null;
-
-        if (string.IsNullOrEmpty(userIdStr))
-        {
-            _logger.LogWarning("User identity is null or empty. Proceeding without user ID.");
-        }
-        else
-        {
-            if (!Guid.TryParse(userIdStr, out var parsedUserId))
-            {
-                _logger.LogError("User identity is not a valid GUID. Actual value: {UserIdStr}", userIdStr);
-                throw new InvalidOperationException("User identity is not a valid GUID.");
-            }
-            userId = parsedUserId;
-        }
+        var userId = GetUserId();
         var movie = Guid.TryParse(idOrSlug, out var id)
             ? await _movieService.GetByIdAsync(id, userId, token)
             : await _movieService.GetBySlugAsync(idOrSlug, userId, token);
@@ -71,27 +59,12 @@ public class MoviesController : ControllerBase
         return Ok(response);
     }
     [AllowAnonymous]
+    [OutputCache(PolicyName = "MovieCache")]
     [HttpGet(ApiEndpoints.Movies.GetAll)]
     [ProducesResponseType(typeof(MoviesResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] GetAllMoviesRequest request, CancellationToken token)
     {
-        var userIdStr = _identityService.GetUserIdentity();
-        Guid? userId = null;
-
-        if (string.IsNullOrEmpty(userIdStr))
-        {
-            _logger.LogWarning("User identity is null or empty. Proceeding without user ID.");
-        }
-        else
-        {
-            if (!Guid.TryParse(userIdStr, out var parsedUserId))
-            {
-                _logger.LogError("User identity is not a valid GUID. Actual value: {UserIdStr}", userIdStr);
-                throw new InvalidOperationException("User identity is not a valid GUID.");
-            }
-            userId = parsedUserId;
-        }
-        _logger.LogInformation(userId.ToString());
+        var userId = GetUserId();
         var options = request.MapToOptions().WithUser(userId);
         var movies = await _movieService.GetAllAsync(options, token);
         var movieCount = await _movieService.GetCountAsync(options.Title, options.YearOfRelease, token);
@@ -106,14 +79,14 @@ public class MoviesController : ControllerBase
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateMovieRequest request, CancellationToken token)
     {
         var movie = request.MapToMovie(id);
-        var userId = Guid.Parse(_identityService.GetUserIdentity());
+        var userId = GetUserId();
         var updatedMovie = await _movieService.UpdateAsync(movie, userId, token);
         if (updatedMovie is null)
         {
             return NotFound();
         }
 
-        // await _outputCacheStore.EvictByTagAsync("movies", token);
+        await _outputCacheStore.EvictByTagAsync("movies", token);
         var response = updatedMovie.MapToResponse();
         return Ok(response);
     }
@@ -131,5 +104,23 @@ public class MoviesController : ControllerBase
 
         // await _outputCacheStore.EvictByTagAsync("movies", token);
         return Ok();
+    }
+    
+    private Guid? GetUserId()
+    {
+        var userIdStr = _identityService.GetUserIdentity();
+        if (string.IsNullOrEmpty(userIdStr))
+        {
+            _logger.LogWarning("User identity is null or empty. Proceeding without user ID.");
+            return null;
+        }
+
+        if (!Guid.TryParse(userIdStr, out var userId))
+        {
+            _logger.LogError("User identity is not a valid GUID. Actual value: {UserIdStr}", userIdStr);
+            throw new InvalidOperationException("User identity is not a valid GUID.");
+        }
+
+        return userId;
     }
 }

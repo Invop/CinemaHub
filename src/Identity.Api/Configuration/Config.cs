@@ -80,8 +80,8 @@ namespace Identity.Api.Configuration
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{configuration["MoviesApiClient"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{configuration["MoviesApiClient"]}/swagger/" },
+                    RedirectUris = { $"{configuration["MoviesApi"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{configuration["MoviesApi"]}/swagger/" },
 
                     AllowedScopes =
                     {
