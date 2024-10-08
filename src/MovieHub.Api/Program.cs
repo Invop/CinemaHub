@@ -16,7 +16,6 @@ builder.Services.AddDatabase();
 
 
 builder.Services.AddApplication();
-
 builder.Services.AddOutputCache(x =>
 {
     x.AddBasePolicy(c => c.Cache());
@@ -25,6 +24,8 @@ builder.Services.AddOutputCache(x =>
             .Expire(TimeSpan.FromMinutes(1))
             .SetVaryByQuery(["title", "year", "sortBy", "page", "pageSize"])
             .Tag("movies"));
+    
+    
 });
 
 builder.Services.AddControllers();
@@ -39,4 +40,5 @@ app.UseMiddleware<ValidationMappingMiddleware>();
 app.MapControllers();
 
 app.UseDefaultOpenApi();
+
 app.Run();

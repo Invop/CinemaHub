@@ -15,7 +15,7 @@ public static class ApplicationServiceCollectionExtensions
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
         builder.AddDefaultAuthentication();
-
+        builder.AddRedisOutputCache("redis");
     }
 
     public static IServiceCollection AddDatabase(this IServiceCollection services)
