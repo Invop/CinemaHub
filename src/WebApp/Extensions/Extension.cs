@@ -15,7 +15,9 @@ public static class Extensions
         builder.AddAuthenticationServices();
         // Application services
         builder.Services.AddScoped<LogOutService>();
-
+        builder.Services.AddHttpClient<MovieService>(o => o.BaseAddress = new("http://movies-api"))
+            .AddApiVersion(1.0)
+            .AddAuthToken();
     }
 
     public static void AddAuthenticationServices(this IHostApplicationBuilder builder)
