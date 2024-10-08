@@ -1,4 +1,4 @@
-using CinemaHub.ServiceDefaults;
+using MovieHub.ServiceDefaults;
 using Duende.IdentityServer.Services;
 using Identity.Api;
 using Identity.Api.Configuration;

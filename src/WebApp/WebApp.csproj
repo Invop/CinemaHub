@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CinemaHub.ServiceDefaults\CinemaHub.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\MovieHub.ServiceDefaults\MovieHub.ServiceDefaults.csproj" />
     </ItemGroup>
 
 </Project>
