@@ -18,6 +18,7 @@ public static class Extensions
         builder.Services.AddHttpClient<MovieService>(o => o.BaseAddress = new("http://movies-api"))
             .AddApiVersion(1.0)
             .AddAuthToken();
+
     }
 
     private static void AddAuthenticationServices(this IHostApplicationBuilder builder)

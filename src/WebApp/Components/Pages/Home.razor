@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using MovieHub.Contracts.Requests
 @using MovieHub.Contracts.Responses
 @using WebApp.Services
 @inject MovieService MovieService
@@ -51,7 +52,11 @@ else
 
 @code {
     private MoviesResponse? _movies;
-    int _page = 1;
+    private int _page = 1;
+    private string? _title;
+    private int? _year;
+    private string? _sortBy;
+
     protected override async Task OnInitializedAsync()
     {
         await FetchMovies();
@@ -59,14 +64,20 @@ else
 
     private async Task FetchMovies()
     {
-        _movies = await MovieService.GetMovies(_page);
+        var request = new GetAllMoviesRequest
+        {
+            Page = _page,
+            Title = _title,
+            Year = _year,
+            SortBy = _sortBy
+        };
+        _movies = await MovieService.GetMovies(request);
     }
 
     private async Task RefreshPage()
     {
+        _page++;
         _movies = null;
         await FetchMovies();
-        _page++;
     }
-
 }
