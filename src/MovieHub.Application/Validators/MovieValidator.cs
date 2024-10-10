@@ -8,15 +8,20 @@ namespace MovieHub.Application.Validators;
 public class MovieValidator : AbstractValidator<Movie>
 {
     private readonly IMovieRepository _movieRepository;
-    
-    public MovieValidator(IMovieRepository movieRepository)
+    private readonly IGenreRepository _genreRepository;
+
+    public MovieValidator(IMovieRepository movieRepository, IGenreRepository genreRepository)
     {
         _movieRepository = movieRepository;
+        _genreRepository = genreRepository;
+
         RuleFor(x => x.Id)
             .NotEmpty();
 
         RuleFor(x => x.Genres)
-            .NotEmpty();
+            .NotEmpty()
+            .MustAsync(GenresMustExist)
+            .WithMessage("Invalid genres");
 
         RuleFor(x => x.Title)
             .NotEmpty();
@@ -39,19 +44,34 @@ public class MovieValidator : AbstractValidator<Movie>
 
     private async Task<bool> ValidateSlug(Movie movie, string slug, CancellationToken token = default)
     {
-        var existingMovie = await _movieRepository.GetBySlugAsync(slug, token: token);
+        var existingMovie = await _movieRepository.GetBySlugAsync(slug, token:token);
 
-        if (existingMovie is not null)
+        if (existingMovie != null && existingMovie.Id != movie.Id)
         {
-            return existingMovie.Id == movie.Id;
+            return false;
         }
 
-        return existingMovie is null;
+        return true;
     }
+
     private bool IsValidBase64(string? base64Text)
     {
         if (base64Text == null) return true; // Allow null values
 
         return Base64.IsValid(base64Text.AsSpan());
+    }
+
+    private async Task<bool> GenresMustExist(ICollection<Genre> genres, CancellationToken token)
+    {
+        foreach (var genre in genres)
+        {
+            var existingGenre = await _genreRepository.GetByIdAsync(genre.GenreId, token);
+            if (existingGenre == null)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

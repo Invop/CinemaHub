@@ -1,23 +1,30 @@
-﻿using MovieHub.Application.Models;
+﻿using Bogus;
+using MovieHub.Application.Infrastructure.Services;
+using MovieHub.Application.Models;
 using MovieHub.Contracts.Requests;
 using MovieHub.Contracts.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MovieHub.Api.Mapping
 {
     public static class ContractMapping
     {
-        public static Movie MapToMovie(this CreateMovieRequest request)
+        public static async Task<Movie> MapToMovie(this CreateMovieRequest request, IGenreService genreService)
         {
+            var movieId = Guid.NewGuid();
+            var allGenres = await genreService.GetAllGenresAsync();
+            var genres = allGenres
+                .Where(gl => request.Genres.Contains(gl.Id));
+        
             return new Movie
             {
-                Id = Guid.NewGuid(),
+                Id = movieId,
                 Title = request.Title,
                 YearOfRelease = request.YearOfRelease,
-                Genres = request.Genres
-                    .Select(name => new Genre { Name = name, MovieId = Guid.NewGuid() })
+                Overview = string.IsNullOrEmpty(request.Overview) ? 
+                    new Faker().Lorem.Paragraphs(min: 7, max: 10) : request.Overview,
+                PosterBase64 = request.PosterBase64,
+                Genres = genres
+                    .Select(genre => new Genre { GenreId = genre.Id, MovieId = movieId })
                     .ToList()
             };
         }
@@ -29,8 +36,10 @@ namespace MovieHub.Api.Mapping
                 Id = id,
                 Title = request.Title,
                 YearOfRelease = request.YearOfRelease,
+                Overview = request.Overview,
+                PosterBase64 = request.PosterBase64,
                 Genres = request.Genres
-                    .Select(name => new Genre { Name = name, MovieId = id })
+                    .Select(genreId => new Genre { GenreId = genreId, MovieId = id })
                     .ToList()
             };
         }
@@ -45,7 +54,11 @@ namespace MovieHub.Api.Mapping
                 Rating = movie.Rating,
                 UserRating = movie.UserRating,
                 YearOfRelease = movie.YearOfRelease,
-                Genres = movie.Genres.Select(g => g.Name).ToList()
+                Overview = movie.Overview,
+                PosterBase64 = movie.PosterBase64,
+                Genres = movie.Genres
+                    .Select(g => g.GenreLookup.Name)
+                    .ToList()
             };
         }
 
@@ -65,7 +78,7 @@ namespace MovieHub.Api.Mapping
             return ratings.Select(x => new MovieRatingResponse
             {
                 Rating = x.Rating,
-                Slug = x.Movie?.Slug,
+                Slug = x.Movie.Slug,
                 MovieId = x.MovieId
             });
         }
@@ -76,6 +89,7 @@ namespace MovieHub.Api.Mapping
             {
                 Title = request.Title,
                 YearOfRelease = request.Year,
+                Genres = request.GenreIds,
                 SortField = request.SortBy?.Trim('+', '-'),
                 SortOrder = request.SortBy is null ? SortOrder.Unsorted :
                     request.SortBy.StartsWith('-') ? SortOrder.Descending : SortOrder.Ascending,

@@ -18,10 +18,6 @@ namespace MovieHub.Application.Models
 
         private static string NormalizeName(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Name cannot be null or empty", nameof(name));
-            }
             return name.Trim().ToLower();
         }
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();

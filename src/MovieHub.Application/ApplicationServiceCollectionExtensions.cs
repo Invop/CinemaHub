@@ -27,11 +27,13 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddHttpContextAccessor();
         services.AddTransient<IIdentityService, IdentityService>();
+        services.AddScoped<IGenreRepository, GenreRepository>();
+        services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IRatingRepository, RatingRepository>();
         services.AddScoped<IRatingService, RatingService>();
         services.AddScoped<IMovieRepository, MovieRepository>();
         services.AddScoped<IMovieService, MovieService>();
-        services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Scoped); // Adjusted to Scoped
+        services.AddValidatorsFromAssemblyContaining<IApplicationMarker>();
         return services;
     }
 }

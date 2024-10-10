@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Logging;
+using MovieHub.Application.Models;
 
 namespace MovieHub.Api.Controllers;
 [ApiVersion(1.0)]
@@ -15,16 +16,18 @@ namespace MovieHub.Api.Controllers;
 public class MoviesController : ControllerBase
 {
     private readonly IMovieService _movieService;
+    private readonly IGenreService _genreService;
     private readonly IIdentityService _identityService;
     private readonly ILogger<MoviesController> _logger;
     private readonly IOutputCacheStore _outputCacheStore;
     public MoviesController(IMovieService movieService, IIdentityService identityService, 
-        ILogger<MoviesController> logger, IOutputCacheStore outputCacheStore)
+        ILogger<MoviesController> logger, IOutputCacheStore outputCacheStore, IGenreService genreService)
     {
         _movieService = movieService;
         _identityService = identityService;
         _logger = logger;
         _outputCacheStore = outputCacheStore;
+        _genreService = genreService;
     }
 
     [HttpPost(ApiEndpoints.Movies.Create)]
@@ -32,7 +35,7 @@ public class MoviesController : ControllerBase
     [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateMovieRequest request, CancellationToken token)
     {
-        var movie = request.MapToMovie();
+        var movie = await request.MapToMovie(_genreService);
         await _movieService.CreateAsync(movie, token);
         await _outputCacheStore.EvictByTagAsync("movies", token);
         var movieResponse = movie.MapToResponse();
@@ -101,8 +104,7 @@ public class MoviesController : ControllerBase
         {
             return NotFound();
         }
-
-        // await _outputCacheStore.EvictByTagAsync("movies", token);
+        await _outputCacheStore.EvictByTagAsync("movies", token);
         return Ok();
     }
     
