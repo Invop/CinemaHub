@@ -97,7 +97,21 @@ namespace MovieHub.Api.Mapping
                 PageSize = request.PageSize
             };
         }
-
+        public static GenreResponse MapToResponse(this GenreLookup genre)
+        {
+            return new GenreResponse
+            {
+                Id = genre.Id,
+                Name = genre.Name
+            };
+        }
+        public static GenresResponse MapToResponse(this IEnumerable<GenreLookup> genres)
+        {
+            return new GenresResponse
+            {
+                Items = genres.Select(MapToResponse).ToList()
+            };
+        }
         public static GetAllMoviesOptions WithUser(this GetAllMoviesOptions options, Guid? userId)
         {
             options.UserId = userId;

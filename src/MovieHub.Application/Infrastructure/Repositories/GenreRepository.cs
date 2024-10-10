@@ -29,26 +29,47 @@ namespace MovieHub.Application.Infrastructure.Repositories
                 .FirstOrDefaultAsync(g => g.Name == name, token);
         }
 
-        public async Task CreateAsync(GenreLookup genre, CancellationToken token = default)
+        public async Task<bool> CreateAsync(GenreLookup genre, CancellationToken token = default)
         {
             _context.GenreLookups.Add(genre);
-            await _context.SaveChangesAsync(token);
+            int result = await _context.SaveChangesAsync(token);
+            return result > 0;
         }
 
-        public async Task UpdateAsync(GenreLookup genre, CancellationToken token = default)
+        public async Task<bool> UpdateAsync(GenreLookup genre, CancellationToken token = default)
         {
-            _context.GenreLookups.Update(genre);
-            await _context.SaveChangesAsync(token);
+            var existingGenre = await _context.GenreLookups
+                .Include(gl => gl.Genres)
+                .FirstOrDefaultAsync(gl => gl.Id == genre.Id, token);
+
+            if (existingGenre == null) return false;
+
+            // Update the GenreLookup fields
+            existingGenre.Name = genre.Name;
+
+            // Update related Genre entities if necessary
+            foreach (var genreEntity in existingGenre.Genres)
+            {
+                // Assuming the logic to update related genres is contained here.
+                // For example, if you want to update a field in Genre
+                genreEntity.MovieId = genreEntity.MovieId;  // Example modification
+            }
+
+            int result = await _context.SaveChangesAsync(token);
+            return result > 0;
         }
 
-        public async Task DeleteAsync(int id, CancellationToken token = default)
+        public async Task<bool> DeleteAsync(int id, CancellationToken token = default)
         {
             var genre = await _context.GenreLookups.FindAsync([id], token);
-            if (genre != null)
+            if (genre == null)
             {
-                _context.GenreLookups.Remove(genre);
-                await _context.SaveChangesAsync(token);
+                return false;
             }
+
+            _context.GenreLookups.Remove(genre);
+            int result = await _context.SaveChangesAsync(token);
+            return result > 0;
         }
     }
 }

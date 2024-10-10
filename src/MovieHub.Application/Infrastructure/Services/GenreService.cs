@@ -30,21 +30,21 @@ namespace MovieHub.Application.Infrastructure.Services
             return _genreRepository.GetByNameAsync(name, token);
         }
 
-        public async Task CreateGenreAsync(GenreLookup genre, CancellationToken token = default)
+        public async Task<bool> CreateGenreAsync(GenreLookup genre, CancellationToken token = default)
         {
             await _genreValidator.ValidateAndThrowAsync(genre, cancellationToken: token);
-            await _genreRepository.CreateAsync(genre, token);
+            return await _genreRepository.CreateAsync(genre, token);
         }
 
-        public async Task UpdateGenreAsync(GenreLookup genre, CancellationToken token = default)
+        public async Task<bool> UpdateGenreAsync(GenreLookup genre, CancellationToken token = default)
         {
             await _genreValidator.ValidateAndThrowAsync(genre, cancellationToken: token);
-            await _genreRepository.UpdateAsync(genre, token);
+            return await _genreRepository.UpdateAsync(genre, token);
         }
 
-        public async Task DeleteGenreAsync(int id, CancellationToken token = default)
+        public async Task<bool> DeleteGenreAsync(int id, CancellationToken token = default)
         {
-            await _genreRepository.DeleteAsync(id, token);
+            return await _genreRepository.DeleteAsync(id, token);
         }
     }
 }
