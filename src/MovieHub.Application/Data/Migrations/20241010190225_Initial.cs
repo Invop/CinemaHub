@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -12,13 +13,30 @@ namespace MovieHub.Application.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "genres",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_genres", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "movies",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     slug = table.Column<string>(type: "text", nullable: false),
                     title = table.Column<string>(type: "text", nullable: false),
-                    yearofrelease = table.Column<int>(type: "integer", nullable: false)
+                    yearofrelease = table.Column<int>(type: "integer", nullable: false),
+                    Rating = table.Column<float>(type: "real", nullable: true),
+                    UserRating = table.Column<int>(type: "integer", nullable: true),
+                    poster_base64 = table.Column<string>(type: "text", nullable: true),
+                    overview = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,17 +44,29 @@ namespace MovieHub.Application.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "genres",
+                name: "movie_genres",
                 columns: table => new
                 {
                     movieid = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false)
+                    genreid = table.Column<int>(type: "integer", nullable: false),
+                    GenreLookupId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_genres", x => new { x.movieid, x.name });
+                    table.PrimaryKey("PK_movie_genres", x => new { x.movieid, x.genreid });
                     table.ForeignKey(
-                        name: "FK_genres_movies_movieid",
+                        name: "FK_movie_genres_genres_GenreLookupId",
+                        column: x => x.GenreLookupId,
+                        principalTable: "genres",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_movie_genres_genres_genreid",
+                        column: x => x.genreid,
+                        principalTable: "genres",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_movie_genres_movies_movieid",
                         column: x => x.movieid,
                         principalTable: "movies",
                         principalColumn: "id",
@@ -63,6 +93,16 @@ namespace MovieHub.Application.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_movie_genres_genreid",
+                table: "movie_genres",
+                column: "genreid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_movie_genres_GenreLookupId",
+                table: "movie_genres",
+                column: "GenreLookupId");
+
+            migrationBuilder.CreateIndex(
                 name: "movies_slug_idx",
                 table: "movies",
                 column: "slug",
@@ -78,10 +118,13 @@ namespace MovieHub.Application.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "genres");
+                name: "movie_genres");
 
             migrationBuilder.DropTable(
                 name: "ratings");
+
+            migrationBuilder.DropTable(
+                name: "genres");
 
             migrationBuilder.DropTable(
                 name: "movies");

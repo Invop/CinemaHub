@@ -1,14 +1,15 @@
+using System.Buffers.Text;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
+using Bogus;
 using Newtonsoft.Json;
 
 namespace MovieHub.Application.Models;
 
 public partial class Movie
 {
-    [JsonIgnore]
+    static readonly Faker Faker = new();
     private string? _slug;
-    
     public Guid Id { get; set; }
     public string Slug 
     { 
@@ -35,12 +36,12 @@ public partial class Movie
             _slug = null; // Reset slug when year changes
         }
     }
-
-    [NotMapped]
     public float? Rating { get; set; }
-    [NotMapped]
     public int? UserRating { get; set; }
+    
+    public string? PosterBase64 { get; set; } = string.Empty;
 
+    public string Overview { get; set; } =string.Empty;
     // Navigation properties
     public ICollection<Genre> Genres { get; set; } = new List<Genre>();
     public ICollection<MovieRating> Ratings { get; set; } = new List<MovieRating>();

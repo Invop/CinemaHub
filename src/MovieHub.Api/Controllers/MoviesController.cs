@@ -7,39 +7,41 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Logging;
+using MovieHub.Application.Models;
 
 namespace MovieHub.Api.Controllers;
 [ApiVersion(1.0)]
-[Authorize]
 [ApiController]
 public class MoviesController : ControllerBase
 {
     private readonly IMovieService _movieService;
+    private readonly IGenreService _genreService;
     private readonly IIdentityService _identityService;
     private readonly ILogger<MoviesController> _logger;
     private readonly IOutputCacheStore _outputCacheStore;
     public MoviesController(IMovieService movieService, IIdentityService identityService, 
-        ILogger<MoviesController> logger, IOutputCacheStore outputCacheStore)
+        ILogger<MoviesController> logger, IOutputCacheStore outputCacheStore, IGenreService genreService)
     {
         _movieService = movieService;
         _identityService = identityService;
         _logger = logger;
         _outputCacheStore = outputCacheStore;
+        _genreService = genreService;
     }
-
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpPost(ApiEndpoints.Movies.Create)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateMovieRequest request, CancellationToken token)
     {
-        var movie = request.MapToMovie();
+        var movie = await request.MapToMovie(_genreService);
         await _movieService.CreateAsync(movie, token);
         await _outputCacheStore.EvictByTagAsync("movies", token);
         var movieResponse = movie.MapToResponse();
         return CreatedAtAction(nameof(Get), new { idOrSlug = movie.Id }, movieResponse);
     }
     
-
+    [AllowAnonymous]
     [HttpGet(ApiEndpoints.Movies.Get)]
     [OutputCache(PolicyName = "MovieCache")]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
@@ -71,7 +73,7 @@ public class MoviesController : ControllerBase
         var moviesResponse = movies.MapToResponse(request.Page, request.PageSize, movieCount);
         return Ok(moviesResponse);
     }
-
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpPut(ApiEndpoints.Movies.Update)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -90,7 +92,7 @@ public class MoviesController : ControllerBase
         var response = updatedMovie.MapToResponse();
         return Ok(response);
     }
-
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpDelete(ApiEndpoints.Movies.Delete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -101,8 +103,7 @@ public class MoviesController : ControllerBase
         {
             return NotFound();
         }
-
-        // await _outputCacheStore.EvictByTagAsync("movies", token);
+        await _outputCacheStore.EvictByTagAsync("movies", token);
         return Ok();
     }
     

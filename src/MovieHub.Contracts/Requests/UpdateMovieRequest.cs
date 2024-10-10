@@ -6,5 +6,9 @@ public class UpdateMovieRequest
 
     public required int YearOfRelease { get; init; }
 
-    public required IEnumerable<string> Genres { get; init; } = Enumerable.Empty<string>();
+    public string Overview { get; init; }
+
+    public string PosterBase64 { get; init; }
+
+    public required IEnumerable<int> Genres { get; init; } = Enumerable.Empty<int>();
 }

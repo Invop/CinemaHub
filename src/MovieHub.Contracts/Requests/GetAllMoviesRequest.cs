@@ -6,5 +6,7 @@ public class GetAllMoviesRequest : PagedRequest
 
     public int? Year { get; init; }
     
+    public IEnumerable<int>? GenreIds { get; init; }
+    
     public string? SortBy { get; init; }
 }

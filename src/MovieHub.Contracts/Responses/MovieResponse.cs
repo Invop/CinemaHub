@@ -14,5 +14,9 @@ public class MovieResponse
 
     public required int YearOfRelease { get; init; }
 
+    public required string Overview { get; init; }
+
+    public string? PosterBase64 { get; init; }
+
     public required IEnumerable<string> Genres { get; init; } = Enumerable.Empty<string>();
 }

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using MovieHub.Application.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -25,13 +19,29 @@ namespace MovieHub.Application.Data
         {
             if (!await context.Movies.AnyAsync())
             {
-                var moviesJson = await File.ReadAllTextAsync("movies.json");
+                var moviesJson = await File.ReadAllTextAsync("reduced_movies.json");
                 var movies = JsonConvert.DeserializeObject<List<MovieSeed>>(moviesJson);
+
+                var allGenres = movies!
+                    .SelectMany(m => m.Genres)
+                    .Select(NormalizeGenre)
+                    .Distinct()
+                    .ToList();
+
+                var genreLookup = new Dictionary<string, GenreLookup>();
+
+                foreach (var genre in allGenres)
+                {
+                    var genreEntity = await FindOrCreateGenreAsync(context, genre);
+                    genreLookup[genre] = genreEntity;
+                }
+
+                await context.SaveChangesAsync();
 
                 // Track existing slugs to skip duplicates
                 var existingSlugs = new HashSet<string>(await context.Movies.Select(m => m.Slug).ToListAsync());
 
-                foreach (var movieSeed in movies!)
+                foreach (var movieSeed in movies)
                 {
                     if (existingSlugs.Contains(movieSeed.Slug))
                     {
@@ -45,12 +55,13 @@ namespace MovieHub.Application.Data
                         Title = movieSeed.Title,
                         YearOfRelease = movieSeed.YearOfRelease,
                         Slug = movieSeed.Slug,
+                        PosterBase64 = movieSeed.PosterBase64,
                     };
 
-                    movie.Genres = movieSeed.Genres.Select(genre => new Genre
+                    movie.Genres = movieSeed.Genres.Select(genreName => new Genre
                     {
                         MovieId = movie.Id,
-                        Name = genre
+                        GenreLookup = genreLookup[NormalizeGenre(genreName)]
                     }).ToList();
 
                     existingSlugs.Add(movieSeed.Slug);
@@ -72,6 +83,25 @@ namespace MovieHub.Application.Data
                 }
             }
         }
+
+        private async Task<GenreLookup> FindOrCreateGenreAsync(MovieDbContext context, string genre)
+        {
+            var normalizedGenre = NormalizeGenre(genre);
+            var genreEntity = await context.Genres.FirstOrDefaultAsync(g => g.Name == normalizedGenre);
+
+            if (genreEntity == null)
+            {
+                genreEntity = new GenreLookup { Name = normalizedGenre };
+                await context.Genres.AddAsync(genreEntity);
+            }
+
+            return genreEntity;
+        }
+
+        private string NormalizeGenre(string genre)
+        {
+            return genre.Trim().ToLower();
+        }
     }
 
     public class MovieSeed
@@ -81,5 +111,6 @@ namespace MovieHub.Application.Data
         public string Title { get; set; } = default!;
         public int YearOfRelease { get; set; }
         public List<string> Genres { get; set; } = new();
+        public string PosterBase64 {get; set;} = default!;
     }
 }

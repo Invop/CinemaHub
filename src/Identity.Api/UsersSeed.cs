@@ -129,9 +129,9 @@ public class UsersSeed(ILogger<UsersSeed> logger, UserManager<ApplicationUser> u
                 throw new Exception(result.Errors.First().Description);
             }
         }
-        if (!await roleManager.RoleExistsAsync("trusted member"))
+        if (!await roleManager.RoleExistsAsync("trusted_member"))
         {
-            var result = await roleManager.CreateAsync(new IdentityRole("trusted member"));
+            var result = await roleManager.CreateAsync(new IdentityRole("trusted_member"));
             if (logger.IsEnabled(LogLevel.Debug))
             {
                 logger.LogDebug("trusted member role created");
