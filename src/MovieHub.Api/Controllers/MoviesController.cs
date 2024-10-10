@@ -11,7 +11,6 @@ using MovieHub.Application.Models;
 
 namespace MovieHub.Api.Controllers;
 [ApiVersion(1.0)]
-[Authorize]
 [ApiController]
 public class MoviesController : ControllerBase
 {
@@ -29,7 +28,7 @@ public class MoviesController : ControllerBase
         _outputCacheStore = outputCacheStore;
         _genreService = genreService;
     }
-
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpPost(ApiEndpoints.Movies.Create)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]
@@ -42,7 +41,7 @@ public class MoviesController : ControllerBase
         return CreatedAtAction(nameof(Get), new { idOrSlug = movie.Id }, movieResponse);
     }
     
-
+    [AllowAnonymous]
     [HttpGet(ApiEndpoints.Movies.Get)]
     [OutputCache(PolicyName = "MovieCache")]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
@@ -74,7 +73,7 @@ public class MoviesController : ControllerBase
         var moviesResponse = movies.MapToResponse(request.Page, request.PageSize, movieCount);
         return Ok(moviesResponse);
     }
-
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpPut(ApiEndpoints.Movies.Update)]
     [ProducesResponseType(typeof(MovieResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -93,7 +92,7 @@ public class MoviesController : ControllerBase
         var response = updatedMovie.MapToResponse();
         return Ok(response);
     }
-
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpDelete(ApiEndpoints.Movies.Delete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

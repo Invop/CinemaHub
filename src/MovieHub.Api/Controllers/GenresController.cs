@@ -24,7 +24,7 @@ public class GenresController : ControllerBase
         _logger = logger;
     }
 
-    //[Authorize]
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpPost(ApiEndpoints.Genres.Create)]
     [ProducesResponseType(typeof(GenreResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationFailureResponse), StatusCodes.Status400BadRequest)]
@@ -34,7 +34,7 @@ public class GenresController : ControllerBase
             .CreateGenreAsync(new GenreLookup {Name = request.Name}, token);
         return result ? Ok() : NotFound();
     }
-
+    [AllowAnonymous]
     [HttpGet(ApiEndpoints.Genres.Get)]
     [ProducesResponseType(typeof(GenreResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -69,7 +69,7 @@ public class GenresController : ControllerBase
         return Ok(genres.MapToResponse());
     }
 
-    //[Authorize]
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpPut(ApiEndpoints.Genres.Update)]
     [ProducesResponseType(typeof(GenreResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -81,7 +81,7 @@ public class GenresController : ControllerBase
         return result ? Ok() : NotFound();
     }
 
-    //[Authorize]
+    [Authorize(Roles = "admin,trusted_member")]
     [HttpDelete(ApiEndpoints.Genres.Delete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
