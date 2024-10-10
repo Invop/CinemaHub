@@ -18,16 +18,9 @@ public class RatingService : IRatingService
 
     public async Task<bool> RateMovieAsync(Guid movieId, int rating, Guid userId, CancellationToken token = default)
     {
-        if (rating is <= 0 or > 5)
+        if (rating is < 0 or > 5)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure
-                {
-                    PropertyName = "Rating",
-                    ErrorMessage = "Rating must be between 1 and 5"
-                }
-            });
+            return false;
         }
 
         var movieExists = await _movieRepository.ExistsByIdAsync(movieId, token);

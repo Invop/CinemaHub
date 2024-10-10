@@ -23,6 +23,16 @@ public class MovieValidator : AbstractValidator<Movie>
             .MustAsync(GenresMustExist)
             .WithMessage("Invalid genres");
 
+        RuleForEach(x => x.Genres)
+            .ChildRules(genres =>
+            {
+                genres.RuleFor(g => g.GenreLookup)
+                    .NotNull();
+
+                genres.RuleFor(g => g.GenreLookup.Name)
+                    .NotEmpty();
+            }).WithMessage("Invalid genres");;
+
         RuleFor(x => x.Title)
             .NotEmpty();
 
