@@ -9,8 +9,9 @@ namespace WebApp.Services
     public class MovieService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _movieEndpoint = "/api/movies";
-        private readonly string _movieRatingsEndpoint = "/api/ratings";
+        private const string MovieEndpoint = "/api/movies";
+        private const string MovieRatingsEndpoint = "/api/ratings";
+
         public MovieService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -18,50 +19,50 @@ namespace WebApp.Services
 
         public Task<MovieResponse?> GetMovie(string idOrSlug)
         {
-            return _httpClient.GetFromJsonAsync<MovieResponse>($"{_movieEndpoint}/{idOrSlug}");
+            return _httpClient.GetFromJsonAsync<MovieResponse>($"{MovieEndpoint}/{idOrSlug}");
         }
 
         public Task<MoviesResponse> GetMovies(GetAllMoviesRequest request)
         {
             var queryString = BuildQueryString(request);
-            return _httpClient.GetFromJsonAsync<MoviesResponse>(_movieEndpoint + queryString)!;
+            return _httpClient.GetFromJsonAsync<MoviesResponse>(MovieEndpoint + queryString)!;
         }
 
         public Task CreateMovie(CreateMovieRequest request)
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _movieEndpoint);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, MovieEndpoint);
             requestMessage.Content = JsonContent.Create(request);
             return _httpClient.SendAsync(requestMessage);
         }
 
         public Task UpdateMovie(Guid id, UpdateMovieRequest request)
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"{_movieEndpoint}/{id}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"{MovieEndpoint}/{id}");
             requestMessage.Content = JsonContent.Create(request);
             return _httpClient.SendAsync(requestMessage);
         }
 
         public Task DeleteMovie(Guid id)
         {
-            return _httpClient.DeleteAsync($"{_movieEndpoint}/{id}");
+            return _httpClient.DeleteAsync($"{MovieEndpoint}/{id}");
         }
 
         
         public Task RateMovie(Guid id, RateMovieRequest request)
         {
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"{_movieRatingsEndpoint}/{id}");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"{MovieRatingsEndpoint}/{id}");
             requestMessage.Content = JsonContent.Create(request);
             return _httpClient.SendAsync(requestMessage);
         }
 
         public Task DeleteRating(Guid id)
         {
-            return _httpClient.DeleteAsync($"{_movieRatingsEndpoint}/{id}");
+            return _httpClient.DeleteAsync($"{MovieRatingsEndpoint}/{id}");
         }
         
         public Task<MovieRatingResponse[]?> GetUserRatings()
         {
-            return _httpClient.GetFromJsonAsync<MovieRatingResponse[]>($"{_movieRatingsEndpoint}/me");
+            return _httpClient.GetFromJsonAsync<MovieRatingResponse[]>($"{MovieRatingsEndpoint}/me");
         }
         
         

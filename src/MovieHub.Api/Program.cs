@@ -21,7 +21,7 @@ builder.Services.AddOutputCache(x =>
     x.AddBasePolicy(c => c.Cache());
     x.AddPolicy("MovieCache", c => 
         c.Cache()
-            .Expire(TimeSpan.FromMinutes(1))
+            .Expire(TimeSpan.FromSeconds(30))
             .SetVaryByQuery(["title", "year", "sortBy", "page", "pageSize"])
             .Tag("movies"));
     
