@@ -6,6 +6,8 @@ public class GetAllMoviesOptions
     
     public int? YearOfRelease { get; set; }
     
+    public IEnumerable<int>? Genres { get; set; }
+    
     public Guid? UserId { get; set; }
 
     public string? SortField { get; set; }

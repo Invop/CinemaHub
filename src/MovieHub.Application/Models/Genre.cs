@@ -3,8 +3,9 @@ namespace MovieHub.Application.Models;
 public class Genre
 {
     public Guid MovieId { get; set; }
-    public string Name { get; set; } = default!;
+    public int GenreId { get; set; }
 
-    // Navigation property
+    // Navigation properties
     public Movie Movie { get; set; } = default!;
+    public GenreLookup GenreLookup { get; set; } = default!;
 }
